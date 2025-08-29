@@ -1,11 +1,10 @@
 import Stripe from "stripe";
-
-// WICHTIG: Node.js Runtime (nicht Edge)
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST() {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-06-20" });
+  // apiVersion weglassen → Account-Default wird verwendet
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -21,7 +20,6 @@ export async function POST() {
 
   return Response.json({ id: session.id }, {
     headers: {
-      // CORS simpel offen – später auf deine Domain einschränken
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "Content-Type"
     }
