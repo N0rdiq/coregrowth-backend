@@ -1,5 +1,7 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+
+// wichtig: Node.js Runtime (nicht Edge)
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -9,7 +11,7 @@ export async function POST(req: Request) {
 
   const buf = await req.arrayBuffer();
 
-  // apiVersion weglassen → Account-Default
+  // KEINE apiVersion angeben → Account-Default wird verwendet
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
   let event: Stripe.Event;
@@ -26,14 +28,17 @@ export async function POST(req: Request) {
 
     if (email) {
       const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE!);
-      await supabase.from("purchases").upsert({
-        email,
-        product: "roi-analyzer",
-        stripe_session_id: session.id,
-        amount_chf: amount,
-        paid_at: new Date().toISOString(),
-        source: "checkout"
-      }, { onConflict: "stripe_session_id" });
+      await supabase.from("purchases").upsert(
+        {
+          email,
+          product: "roi-analyzer",
+          stripe_session_id: session.id,
+          amount_chf: amount,
+          paid_at: new Date().toISOString(),
+          source: "checkout"
+        },
+        { onConflict: "stripe_session_id" }
+      );
     }
   }
 
