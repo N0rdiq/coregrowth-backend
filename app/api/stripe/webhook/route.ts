@@ -1,11 +1,17 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
+// WICHTIG: Node.js Runtime (nicht Edge)
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature");
   if (!sig) return new Response("Missing signature", { status: 400 });
 
+  // App Router: rohes ArrayBuffer lesen (kein Body-Parser aktiv)
   const buf = await req.arrayBuffer();
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2024-06-20" });
 
   let event: Stripe.Event;
@@ -34,5 +40,6 @@ export async function POST(req: Request) {
         }, { onConflict: "stripe_session_id" });
     }
   }
+
   return new Response(null, { status: 200 });
 }
