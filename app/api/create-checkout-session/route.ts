@@ -1,9 +1,11 @@
 import Stripe from "stripe";
+
+// wichtig: Node.js Runtime (nicht Edge)
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST() {
-  // apiVersion weglassen → Account-Default wird verwendet
+  // KEINE apiVersion angeben → Account-Default wird verwendet
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
   const session = await stripe.checkout.sessions.create({
