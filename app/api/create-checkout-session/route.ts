@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST() {
   // KEINE apiVersion angeben → Account-Default wird verwendet
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2023-10-16" });
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
