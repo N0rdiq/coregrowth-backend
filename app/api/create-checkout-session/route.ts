@@ -14,7 +14,7 @@ export async function POST() {
     line_items: [{ price: process.env.PRICE_ID!, quantity: 1 }],
     success_url: `${process.env.DOMAIN}/roi-analyzer/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.DOMAIN}/roi-analyzer?canceled=1`,
-    locale: "de",  // ← HIER geändert!
+    locale: "de",
     billing_address_collection: "auto",
     allow_promotion_codes: true
   });
